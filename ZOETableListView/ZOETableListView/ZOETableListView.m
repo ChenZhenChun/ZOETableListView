@@ -28,13 +28,13 @@
 
 @implementation ZOETableListView
 @synthesize tintColor = _tintColor;
-    
+
 - (void)setDelegate:(id<TableListViewDelegate>)delegate {
     _delegate = delegate;
     _delegateController = (UIViewController *)delegate;
     [self initTableListView];
 }
-    
+
 #pragma mark - UITableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     _rows = 0;
@@ -47,7 +47,7 @@
     }
     return _rows;
 }
-    
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
     if ([self.delegate respondsToSelector:@selector(tableListView:cellForRowAtIndexPath:)]) {
@@ -84,7 +84,7 @@
     }
     return cell;
 }
-    
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat cellH = 44;
     if ([self.delegate respondsToSelector:@selector(heightForRow)]) {
@@ -97,9 +97,12 @@
                                        _tablelistFrame.size.height-_rows*cellH);
     return cellH;
 }
-    
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     //    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    _seleted = !_seleted;
+    self.titleViewBtn.selected = _seleted;
+    [self hiddenTableListView];
     //点击按钮文字及图片自适应
     if (_indexPath) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -108,15 +111,12 @@
     }
     _indexPath = indexPath;
     _seletedRow = indexPath.row;
-    _seleted = !_seleted;
-    self.titleViewBtn.selected = _seleted;
-    [self hiddenTableListView];
     if ([self.delegate respondsToSelector:@selector(tableListView:didSelectRowAtIndexPath:)]) {
         [self.delegate tableListView:self didSelectRowAtIndexPath:indexPath];
     }
 }
-    
-    
+
+
 #pragma mark - Action
 //titleView点击事件
 - (void)clickTableListViewByButton:(UIButton *)send {
@@ -129,7 +129,7 @@
         [self hiddenTableListView];
     }
 }
-    
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     _seleted = !_seleted;
     _titleViewBtn.selected = _seleted;
@@ -147,7 +147,7 @@
     }];
     
 }
-    
+
 //显示控件
 - (void)showTableListView {
     [self.tableView reloadData];
@@ -160,11 +160,11 @@
     }];
     
 }
-    
+
 - (void)showOrHidenControl {
     [self clickTableListViewByButton:self.titleViewBtn];
 }
-    
+
 - (UIView *)footerView {
     if (!_footerView) {
         _footerView = [[UIView alloc]init];
@@ -174,8 +174,8 @@
     }
     return _footerView;
 }
-    
-    //cell样式控制
+
+//cell样式控制
 - (void)configCellStyleWithCell:(UITableViewCell *)cell {
     if (_accessoryType != TableListViewCellAccessoryNone ) {
         if (_accessoryType == TableListViewCellAccessoryCheckmark) {
@@ -189,12 +189,12 @@
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
 }
-    
+
 //刷新
 - (void)reloadData {
     [self.tableView reloadData];
 }
-    
+
 //点击按钮根据文字自适应
 - (void)sizeToFitTitleViewBtn:(NSString *)title {
     [self.titleViewBtn setTitle:title forState:UIControlStateNormal];
@@ -205,8 +205,8 @@
     [_titleViewBtn setImageEdgeInsets:UIEdgeInsetsMake(0,frame.size.width-(50+_titleBtnImageRightEdgeInset), 0,0)];
     [_titleViewBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0,30)];
 }
-    
-    
+
+
 #pragma mark -Properties
 //titleView按钮
 - (UIButton *)titleViewBtn {
@@ -220,7 +220,7 @@
     _titleViewBtn.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2.0,44/2.0);
     return _titleViewBtn;
 }
-    
+
 - (UITableView *)tableView {
     if (!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
@@ -243,23 +243,23 @@
     }
     return _tableView;
 }
-    
+
 - (void)setTintColor:(UIColor *)tintColor {
     [super setTintColor:tintColor];
     _tintColor = tintColor;
 }
-    
+
 - (UIColor *)tintColor {
     if (!_tintColor) {
         _tintColor = [UIColor blackColor];
     }
     return _tintColor;
 }
-    
+
 - (UIButton *)titleBtn {
     return self.titleViewBtn;
 }
-    
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -267,7 +267,7 @@
     }
     return self;
 }
-    
+
 - (void)initTableListView {
     _isHiddentFlag = YES;
     _seleted = NO;
