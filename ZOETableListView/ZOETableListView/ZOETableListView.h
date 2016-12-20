@@ -33,7 +33,7 @@ typedef enum : NSUInteger {
 
 @interface ZOETableListView : UIView
 
-@property (nonatomic,strong) id<TableListViewDelegate>      delegate;
+@property (nonatomic,assign) id<TableListViewDelegate>      delegate;
 @property (nonatomic,assign) TableListViewCellAccessoryType accessoryType;
 @property (nonatomic,assign) NSInteger                      seletedRow;//Default is 0。默认选中第几行数据。
 @property (nonatomic,assign) CGFloat                        titleBtnImageRightEdgeInset;//Default is 0。
