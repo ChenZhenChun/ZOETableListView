@@ -14,6 +14,7 @@
     NSIndexPath *_indexPath;//选中的索引
     BOOL        _seleted;//button选中状态
     NSInteger   _rows;
+    CGFloat     cellH;
 }
 @property (nonatomic,strong) UIButton           *titleViewBtn;
 @property (nonatomic,strong) UITableView        *tableView;
@@ -44,6 +45,8 @@
     if (_rows == 0) {
         _delegateController.navigationItem.titleView = nil;
         self.footerView.frame = CGRectZero;
+    }else {
+        _delegateController.navigationItem.titleView = self.titleViewBtn;
     }
     return _rows;
 }
@@ -86,15 +89,10 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat cellH = 44;
+    cellH = 44;
     if ([self.delegate respondsToSelector:@selector(heightForRow)]) {
         cellH = [self.delegate heightForRow];
     }
-    _delegateController.navigationItem.titleView = self.titleViewBtn;
-    self.footerView.frame = CGRectMake(0,
-                                       _rows*cellH,
-                                       [UIScreen mainScreen].bounds.size.width,
-                                       _tablelistFrame.size.height-_rows*cellH);
     return cellH;
 }
 
@@ -140,8 +138,11 @@
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, 0);
     __weak typeof(self)weakSelf = self;
     [UIView animateWithDuration:0.2 animations:^{
-        weakSelf.tableView.frame = CGRectMake(0, 0, _tablelistFrame.size.width,0);
-        weakSelf.footerView.frame = CGRectMake(0,0,_tablelistFrame.size.width,0);
+        weakSelf.tableView.frame = CGRectMake(0, -_tablelistFrame.size.height, _tablelistFrame.size.width,_tablelistFrame.size.height);
+        weakSelf.footerView.frame = CGRectMake(0,
+                                               -_tablelistFrame.size.height,
+                                               [UIScreen mainScreen].bounds.size.width,
+                                               _tablelistFrame.size.height-_rows*cellH);
     } completion:^(BOOL finished) {
         weakSelf.isHiddentFlag = YES;
     }];
@@ -155,6 +156,10 @@
     __weak typeof(self) weakSelf = self;
     [UIView animateWithDuration:0.2 animations:^{
         weakSelf.tableView.frame = CGRectMake(0, 0, _tablelistFrame.size.width,_tablelistFrame.size.height);
+        weakSelf.footerView.frame = CGRectMake(0,
+                                               _rows*cellH,
+                                               [UIScreen mainScreen].bounds.size.width,
+                                               _tablelistFrame.size.height-_rows*cellH);
     } completion:^(BOOL finished) {
         weakSelf.isHiddentFlag = NO;
     }];
@@ -202,8 +207,8 @@
     [_titleViewBtn sizeToFit];
     frame.size.width = _titleViewBtn.frame.size.width+60;
     _titleViewBtn.frame = frame;
-    [_titleViewBtn setImageEdgeInsets:UIEdgeInsetsMake(0,frame.size.width-(50+_titleBtnImageRightEdgeInset), 0,0)];
-    [_titleViewBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0,30)];
+    [self.titleViewBtn setImageEdgeInsets:UIEdgeInsetsMake(0,frame.size.width-(50+_titleBtnImageRightEdgeInset), 0,0)];
+    [self.titleViewBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0,30)];
 }
 
 
@@ -254,10 +259,6 @@
         _tintColor = [UIColor blackColor];
     }
     return _tintColor;
-}
-
-- (UIButton *)titleBtn {
-    return self.titleViewBtn;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
