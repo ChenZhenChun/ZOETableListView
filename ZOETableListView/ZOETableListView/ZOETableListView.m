@@ -114,6 +114,14 @@
     }
 }
 
+//观察者模式观察titleViewBtn frame值的变化（导航栏其他按钮的添加会影响titleView frame的变化
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"frame"]) {
+        self.titleViewBtn.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2.0,44/2.0);
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
 
 #pragma mark - Action
 //titleView点击事件
@@ -221,8 +229,8 @@
         [_titleViewBtn addTarget:self action:@selector(clickTableListViewByButton:) forControlEvents:UIControlEventTouchUpInside];
         [_titleViewBtn setImage:[UIImage imageNamed:@"down_arrow_white"] forState:UIControlStateNormal];
         [_titleViewBtn setImage:[UIImage imageNamed:@"up_arrow_white"] forState:UIControlStateSelected];
+        [_titleViewBtn addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
     }
-    _titleViewBtn.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2.0,44/2.0);
     return _titleViewBtn;
 }
 
@@ -280,5 +288,9 @@
     self.backgroundColor = [UIColor colorWithRed:106/255.0 green:106/255.0 blue:106/255.0 alpha:0.3];
     [self addSubview:self.tableView];
     [self addSubview:self.footerView];
+}
+
+- (void)dealloc {
+    [self.titleViewBtn removeObserver:self forKeyPath:@"frame" context:nil];
 }
 @end
