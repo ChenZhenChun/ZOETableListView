@@ -117,6 +117,7 @@
 //观察者模式观察titleViewBtn frame值的变化（导航栏其他按钮的添加会影响titleView frame的变化
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"frame"]) {
+        if (@available(iOS 11.0, *)) return;
         self.titleViewBtn.center = CGPointMake([UIScreen mainScreen].bounds.size.width/2.0,44/2.0);
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -253,6 +254,14 @@
         if ([_tableView respondsToSelector:@selector(setLayoutMargins:)]) {
             [_tableView setLayoutMargins:UIEdgeInsetsZero];
         }
+        if (@available(iOS 11.0, *)) {
+            _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+            _tableView.estimatedRowHeight = 0;
+            _tableView.estimatedSectionHeaderHeight = 0;
+            _tableView.estimatedSectionFooterHeight = 0;
+        } else {
+            // Fallback on earlier versions
+        }
     }
     return _tableView;
 }
@@ -294,3 +303,4 @@
     [self.titleViewBtn removeObserver:self forKeyPath:@"frame" context:nil];
 }
 @end
+
